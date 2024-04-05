@@ -1,0 +1,25 @@
+.file-img{
+    height: 25px;
+}
+
+.file-box{
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.file-name{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+
+.file-details{
+    display: flex;
+    gap: 2px;
+    align-items: end;
+    cursor: pointer;
+    width: calc(100% - 45px);
+}
