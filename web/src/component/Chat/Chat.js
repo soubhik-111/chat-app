@@ -11,7 +11,7 @@ import File from '../File/File.js';
 
 
 
-const ENDPOINT = "https://chat-app-rggm.onrender.com/api"
+const ENDPOINT = "https://chat-app-6v8k.onrender.com"
 
 let socket, selectedFile = null, fileName = null;
 
