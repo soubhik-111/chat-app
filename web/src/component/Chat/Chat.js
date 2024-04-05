@@ -12,6 +12,7 @@ import File from '../File/File.js';
 
 
 const ENDPOINT = "https://chat-app-6v8k.onrender.com"
+// const ENDPOINT = "http://localhost:4444"
 
 let socket, selectedFile = null, fileName = null;
 

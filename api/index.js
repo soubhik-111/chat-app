@@ -9,15 +9,15 @@ const port = process.env.PORT || 4444;
 
 const users = [{}];
 
-app.use(express.static('build'));
+
 
 app.use(cors());
 
 app.use(express.json({ limit: '10mb' }));
 
-app.get("/", (req, res) => {
-    res.send("Welcome to crazy chat app");
-})
+// app.get("/", (req, res) => {
+//     res.send("Welcome to crazy chat app");
+// })
 
 const server = http.createServer(app);
 
@@ -50,8 +50,7 @@ io.on("connection", (socket) => {
     })
 
 })
-
-
+app.use(express.static('build'));
 server.listen(port, () => {
     console.log('Server is started on http://localhost:' + port);
 })
