@@ -15,9 +15,9 @@ app.use(cors());
 
 app.use(express.json({ limit: '10mb' }));
 
-// app.get("/", (req, res) => {
-//     res.send("Welcome to crazy chat app");
-// })
+app.get("/api/data", (req, res) => {
+    res.send("Welcome to crazy chat app");
+})
 
 const server = http.createServer(app);
 
