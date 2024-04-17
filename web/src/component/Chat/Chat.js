@@ -8,20 +8,17 @@ import sendImg from "../../image/send.png";
 import AddImg from "../../image/plus-icon.png";
 import closeImg from "../../image/close.png";
 import File from '../File/File.js';
+import CONFIG from '../../config.json';
 
+const ENDPOINT = CONFIG.baseurl;
 
-
-const ENDPOINT = "https://chat-app-6v8k.onrender.com"
-// const ENDPOINT = "http://localhost:4444"
-
-let socket, selectedFile = null, fileName = null;
+let socket, fileDetails = [];
 
 const Chat = ({user, setUser}) => {
 
   const [id, setid] = useState("")
   const [msg, setmsg] = useState([])
   
-  console.log(msg)
 
   const send = () => {
     const message = document.getElementById('ChatInput').value;
@@ -34,9 +31,14 @@ const Chat = ({user, setUser}) => {
     const sendFileBtn = document.getElementById("sendFileBtn");
     const addBtn = document.getElementById("addBtn");
     file.type = "file";
+    file.multiple = true;
     file.addEventListener('change', function () {
-      fileName = this.files[0].name
-      selectedFile = this.files[0]
+      fileDetails = [];
+
+      for(let i = 0; i < this.files.length; i++){
+        fileDetails.push({fileName:this.files[i].name, selectedFile: this.files[i]})
+      }
+
       sendFileBtn.style.display = "block";
       addBtn.style.display = "none";
       sendFileBtn.style.backgroundColor = "green";
@@ -49,8 +51,9 @@ const Chat = ({user, setUser}) => {
   const sendFile = () => {
     const sendFileBtn = document.getElementById("sendFileBtn");
     const addBtn = document.getElementById("addBtn");
-    socket.emit("uploadDocument", { documentData:{selectedFile,fileName}, id });
-    selectedFile = null
+    fileDetails.forEach(fileData => {
+      socket.emit("uploadDocument", { documentData: { selectedFile: fileData.selectedFile, fileName: fileData.fileName }, id });
+    });
     sendFileBtn.style.display = "none";
     addBtn.style.display = "block";
     sendFileBtn.style.backgroundColor = "red";
@@ -61,26 +64,21 @@ const Chat = ({user, setUser}) => {
     socket = socketIO(ENDPOINT, { transports: ['websocket'] });
 
     socket.on('connect', () => {
-      console.log("Connected");
       setid(socket.id)
     })
 
-    console.log(socket)
     socket.emit('joined', { user })
 
     socket.on('welcome', (data) => {
       setmsg(prevMsg => [...prevMsg, data])
-      console.log(data.user, data.message)
     })
 
     socket.on('userJoined', (data) => {
       setmsg(prevMsg => [...prevMsg, data])
-      console.log(data.user, data.message)
     })
 
     socket.on('leave', (data) => {
       setmsg(prevMsg => [...prevMsg, data])
-      console.log(data.user, data.message)
     })
 
     return () => {
@@ -92,11 +90,9 @@ const Chat = ({user, setUser}) => {
   useEffect(() => {
     socket.on('sendMessage', (data) => {
       setmsg(prevMsg => [...prevMsg, data])
-      console.log(data.user, data.message, data.id)
     })
     socket.on('sendDocument', (data) => {
       setmsg(prevMsg => [...prevMsg, data])
-      console.log(data)
     })
     return () => {
       socket.off()
@@ -122,7 +118,7 @@ const Chat = ({user, setUser}) => {
         </ReactScrollToBottom>
         <div className="InputBox">
           <input placeholder='Enter Your Message' type="text" id="ChatInput" onKeyDown={(e) => e.key === 'Enter' ? send() : ""} />
-          <button className="SendBtn" id='addBtn' onClick={(selectFile)}><img src={AddImg} alt="send" /></button>
+          <button className="SendBtn" id='addBtn' onClick={selectFile}><img src={AddImg} alt="send" /></button>
           <button className="SendBtn" id='sendFileBtn' onClick={sendFile}>Send</button>
           <button className="SendBtn" onClick={send}><img src={sendImg} alt="send" /></button>
         </div>
